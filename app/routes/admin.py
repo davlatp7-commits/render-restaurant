@@ -1,14 +1,23 @@
 import os
 import uuid
+import cloudinary
+import cloudinary.uploader
 from flask import Blueprint, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from app import db
 from app.models.dish import Dish
 from app.models.category import Category
+from app.models.order import Order
+from app.models.order_item import OrderItem
+
+# Конфигурация Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
-
-UPLOAD_FOLDER = 'app/static/img'
 
 STATUSES = ['новый', 'принят', 'готовится', 'передаётся', 'завершён']
 
@@ -27,14 +36,13 @@ def add_dish():
         price = float(request.form['price'])
     except (KeyError, ValueError):
         price = 0.0
+
+    # Загрузка в Cloudinary
     image = request.files.get('image')
     filename = None
     if image and image.filename:
-        cleaned = secure_filename(image.filename)
-        unique_prefix = uuid.uuid4().hex
-        filename = f"{unique_prefix}_{cleaned}"
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        image.save(os.path.join(UPLOAD_FOLDER, filename))
+        upload_result = cloudinary.uploader.upload(image)
+        filename = upload_result.get("secure_url")
 
     category_id_str = request.form.get('category_id', '').strip()
     category_id = int(category_id_str) if category_id_str else None
@@ -64,9 +72,6 @@ def toggle_availability(dish_id):
     dish.is_available = not dish.is_available
     db.session.commit()
     return redirect(url_for('admin.admin_panel'))
-
-from app.models.order import Order
-from app.models.order_item import OrderItem
 
 @admin_bp.route('/orders')
 def admin_orders():
@@ -110,12 +115,8 @@ def edit_dish(dish_id):
 
         image = request.files.get('image')
         if image and image.filename:
-            cleaned = secure_filename(image.filename)
-            unique_prefix = uuid.uuid4().hex
-            filename = f"{unique_prefix}_{cleaned}"
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-            image.save(os.path.join(UPLOAD_FOLDER, filename))
-            dish.image_filename = filename
+            upload_result = cloudinary.uploader.upload(image)
+            dish.image_filename = upload_result.get("secure_url")
 
         db.session.commit()
         return redirect(url_for('admin.admin_panel'))
@@ -153,7 +154,6 @@ def edit_category(category_id):
 
 @admin_bp.route('/categories/delete/<int:category_id>')
 def delete_category(category_id):
-    """Delete a category and unlink it from any dishes."""
     category = Category.query.get_or_404(category_id)
     for dish in Dish.query.filter_by(category_id=category.id).all():
         dish.category_id = None

@@ -143,12 +143,17 @@
         {% for dish in dishes %}
         <tr>
             <td>
-                {% if dish.image_filename %}
-                    <img class="thumbnail" src="{{ url_for('static', filename='img/' + dish.image_filename) }}" alt="{{ dish.name }}">
-                {% else %}
-                    <span>—</span>
-                {% endif %}
-            </td>
+    {% if dish.image_filename %}
+        {% if dish.image_filename.startswith('http') %}
+            <img class="thumbnail" src="{{ dish.image_filename }}" alt="{{ dish.name }}">
+        {% else %}
+            <img class="thumbnail" src="{{ url_for('static', filename='img/' + dish.image_filename) }}" alt="{{ dish.name }}">
+        {% endif %}
+    {% else %}
+        <span>—</span>
+    {% endif %}
+</td>
+
             <td>{{ dish.name }}</td>
             <td>{{ dish.description }}</td>
             <td>{{ dish.weight }}</td>

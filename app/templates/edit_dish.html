@@ -10,7 +10,6 @@
             background-size: cover;
             margin: 0;
             padding: 0;
-            /* Use black text for improved readability */
             color: #000;
         }
         header {
@@ -67,6 +66,14 @@
         form button:hover {
             background: #ffe066;
         }
+        .image-preview {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .image-preview img {
+            max-width: 200px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -82,6 +89,17 @@
 
 <div class="container">
     <h2>{{ dish.name }}</h2>
+
+    {% if dish.image_filename %}
+        <div class="image-preview">
+            {% if dish.image_filename.startswith('http') %}
+                <img src="{{ dish.image_filename }}" alt="Изображение блюда">
+            {% else %}
+                <img src="{{ url_for('static', filename='img/' + dish.image_filename) }}" alt="Изображение блюда">
+            {% endif %}
+        </div>
+    {% endif %}
+
     <form method="post" enctype="multipart/form-data">
         <input name="name" value="{{ dish.name }}" placeholder="Название" required>
         <textarea name="description" placeholder="Описание">{{ dish.description }}</textarea>

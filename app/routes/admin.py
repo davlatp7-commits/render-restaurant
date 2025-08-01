@@ -1,9 +1,7 @@
 import os
-import uuid
 import cloudinary
 import cloudinary.uploader
 from flask import Blueprint, render_template, request, redirect, url_for
-from werkzeug.utils import secure_filename
 from app import db
 from app.models.dish import Dish
 from app.models.category import Category
@@ -37,12 +35,11 @@ def add_dish():
     except (KeyError, ValueError):
         price = 0.0
 
-    # Загрузка в Cloudinary
     image = request.files.get('image')
-    filename = None
+    image_url = None
     if image and image.filename:
         upload_result = cloudinary.uploader.upload(image)
-        filename = upload_result.get("secure_url")
+        image_url = upload_result.get("secure_url")
 
     category_id_str = request.form.get('category_id', '').strip()
     category_id = int(category_id_str) if category_id_str else None
@@ -52,7 +49,7 @@ def add_dish():
         description=description,
         weight=weight,
         price=price,
-        image_filename=filename,
+        image_url=image_url,
         category_id=category_id
     )
     db.session.add(dish)
@@ -116,7 +113,7 @@ def edit_dish(dish_id):
         image = request.files.get('image')
         if image and image.filename:
             upload_result = cloudinary.uploader.upload(image)
-            dish.image_filename = upload_result.get("secure_url")
+            dish.image_url = upload_result.get("secure_url")
 
         db.session.commit()
         return redirect(url_for('admin.admin_panel'))

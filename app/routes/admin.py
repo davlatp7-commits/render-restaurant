@@ -8,12 +8,8 @@ from app.models.category import Category
 from app.models.order import Order
 from app.models.order_item import OrderItem
 
-# Конфигурация Cloudinary
-cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET')
-)
+# ✅ Конфигурация Cloudinary через CLOUDINARY_URL
+cloudinary.config(secure=True)
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 

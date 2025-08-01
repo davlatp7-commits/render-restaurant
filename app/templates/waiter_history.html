@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>История заказов</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fdfdfd url('/static/img/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            /* Use black text for improved readability */
+            color: #000;
+        }
+        header {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+        }
+        .header-buttons a {
+            background: #FFCC00;
+            border-radius: 8px;
+            padding: 8px 14px;
+            margin-left: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+        .header-buttons a:hover {
+            background: #ffe066;
+        }
+        .orders-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .order-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .order-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>История заказов</h1>
+    <div class="header-buttons">
+        <a href="{{ url_for('waiter.waiter_panel') }}">Активные заказы</a>
+        <a href="{{ url_for('waiter.waiter_history') }}">История</a>
+        <a href="{{ url_for('waiter.clear_history') }}">Очистить историю</a>
+    </div>
+</header>
+
+<div class="orders-container">
+{% for order in orders %}
+  <div class="order-card">
+    <div class="order-header">Стол №{{ order.table_id }} — {{ order.status }}</div>
+    <ul>
+      {% for item in order.items %}
+        <li>{{ item.dish.name }} ×{{ item.quantity }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endfor %}
+</div>
+
+</body>
+</html>

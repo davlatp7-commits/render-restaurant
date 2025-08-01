@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Категории блюд</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fdfdfd url('/static/img/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            /* Use black text for improved readability */
+            color: #000;
+        }
+        header {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        nav a:hover {
+            background: #FFCC00;
+            color: #000;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        form.add-category {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        form.add-category input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        form.add-category button {
+            background: #FFCC00;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        form.add-category button:hover {
+            background: #ffe066;
+        }
+        .category-list {
+            margin-top: 20px;
+        }
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .category-item form {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+        }
+        .category-item input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .category-item button {
+            background: #FFCC00;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .category-item button:hover {
+            background: #ffe066;
+        }
+        .category-item a {
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .category-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Категории блюд</h1>
+    <nav>
+        <a href="{{ url_for('admin.admin_orders') }}">Заказы</a>
+        <a href="{{ url_for('admin.orders_history') }}">История</a>
+        <a href="{{ url_for('admin.manage_categories') }}">Категории</a>
+        <a href="{{ url_for('admin.admin_panel') }}">Блюда</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h2>Добавить категорию</h2>
+    <form class="add-category" method="post" action="{{ url_for('admin.add_category') }}">
+        <input type="text" name="name" placeholder="Новая категория" required>
+        <button type="submit">Добавить</button>
+    </form>
+    <h2>Существующие категории</h2>
+    <div class="category-list">
+    {% for category in categories %}
+        <div class="category-item">
+            <form method="post" action="{{ url_for('admin.edit_category', category_id=category.id) }}">
+                <input type="text" name="name" value="{{ category.name }}">
+                <button type="submit">Обновить</button>
+            </form>
+            <a href="{{ url_for('admin.delete_category', category_id=category.id) }}" onclick="return confirm('Удалить категорию?');">Удалить</a>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Статус заказа</title>
+    <meta http-equiv="refresh" content="5">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fdfdfd url('/static/img/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 40px;
+            /* Use black text for improved readability */
+            color: #000;
+        }
+        .status-card {
+            background: rgba(255,255,255,0.95);
+            padding: 20px 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        h1 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="status-card">
+{% if order %}
+  <h1>Стол {{ order.table_id }}</h1>
+  <p><strong>Статус:</strong> {{ order.status }}</p>
+  <p><strong>Комментарий:</strong> {{ order.comment }}</p>
+  <h3>Блюда:</h3>
+  <ul>
+    {% for item in order.items %}
+      <li>{{ item.dish.name }} ×{{ item.quantity }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Заказ не найден</p>
+{% endif %}
+</div>
+</body>
+</html>

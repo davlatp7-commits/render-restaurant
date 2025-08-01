@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель официанта</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #fdfdfd url('/static/img/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #000;
+        }
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+        }
+        nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #000;
+        }
+        .container {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            margin: 20px;
+            border-radius: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+        }
+        .status {
+            padding: 4px 10px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+        }
+        .принят { background: #28a745; }
+        .готовится { background: #007bff; }
+        .передаётся { background: #ffc107; color: #000; }
+        .завершён { background: #6f42c1; }
+        .button {
+            background: #FFCC00;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .header-buttons a {
+            background: #FFCC00;
+            border-radius: 8px;
+            padding: 8px 14px;
+            margin-left: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+        .header-buttons a:hover {
+            background: #ffe066;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Панель официанта</h1>
+    <div class="header-buttons">
+        <a href="{{ url_for('waiter.waiter_panel') }}">Активные заказы</a>
+        <a href="{{ url_for('waiter.waiter_history') }}">История</a>
+        <a href="{{ url_for('waiter.clear_history') }}">Очистить историю</a>
+    </div>
+</header>
+
+<div class="container">
+    {% for order in orders %}
+    <table>
+        <tr>
+            <th>Стол</th>
+            <th>Блюда</th>
+            <th>Комментарий</th>
+            <th>Статус</th>
+            <th>Действие</th>
+        </tr>
+        <tr>
+            <td class="order-info">{{ order.table_id }}</td>
+            <td class="order-info">
+                <ul style="margin: 0; padding-left: 16px;">
+                    {% for item in order.items %}
+                        {% if item.dish %}
+                            <li>{{ item.dish.name }} — {{ item.quantity }} шт.</li>
+                        {% else %}
+                            <li style="color: red;"><em>[удалено блюдо]</em> — {{ item.quantity }} шт.</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </td>
+            <td class="order-info">{{ order.comment }}</td>
+            <td class="order-info">
+                <span class="status {{ order.status }}">{{ order.status }}</span>
+            </td>
+            <td>
+                {% for status in ['принят', 'готовится', 'передаётся', 'завершён'] %}
+                <a class="button" href="{{ url_for('waiter.update_status', order_id=order.id, new_status=status) }}">{{ status }}</a>
+                {% endfor %}
+                <a class="button" href="{{ url_for('waiter.delete_order', order_id=order.id) }}">Удалить</a>
+            </td>
+        </tr>
+    </table>
+    {% endfor %}
+</div>
+
+<script src="{{ url_for('static', filename='js/waiter.js') }}"></script>
+</body>
+</html>

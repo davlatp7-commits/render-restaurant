@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8">
+    <!-- Ensure proper scaling on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Статус заказа</title>
     <meta http-equiv="refresh" content="5">
     <style>
@@ -33,6 +35,20 @@
         }
         li {
             margin-bottom: 5px;
+        }
+
+        /* Responsive tweaks for narrow screens */
+        @media (max-width: 500px) {
+            body {
+                padding: 20px;
+            }
+            .status-card {
+                max-width: 90%;
+                padding: 15px 20px;
+            }
+            h1 {
+                font-size: 20px;
+            }
         }
     </style>
 </head>

@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!-- Ensure proper scaling on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>История заказов</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <style>
@@ -55,6 +57,33 @@
         .order-header {
             font-weight: bold;
             margin-bottom: 10px;
+        }
+
+        /* Responsive layout for mobile */
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+            .header-buttons {
+                margin-top: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+            .header-buttons a {
+                margin-left: 0;
+                margin-right: 10px;
+                margin-bottom: 10px;
+            }
+            .orders-container {
+                margin: 10px;
+                padding: 15px;
+            }
+            .order-card {
+                padding: 15px;
+            }
         }
     </style>
 </head>

@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!-- Ensure proper scaling on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Корзина</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <style>
@@ -60,6 +62,33 @@
             /* Unify input corners to 8px */
             border-radius: 8px;
             padding: 6px;
+        }
+
+        /* Make long tables scroll horizontally on narrow screens */
+        table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            /* Shrink quantity control buttons */
+            .qty-control button {
+                width: 28px;
+                height: 28px;
+                font-size: 18px;
+            }
+            .qty-control input[type="number"] {
+                width: 50px;
+            }
+            /* Center action buttons and space them out */
+            .actions {
+                text-align: center;
+            }
+            .button {
+                margin: 5px 0;
+                display: inline-block;
+            }
         }
     </style>
 </head>

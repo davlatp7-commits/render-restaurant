@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!-- Ensure proper scaling on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Текущие заказы</title>
     <style>
         body {
@@ -70,6 +72,34 @@
         }
         button:hover {
             background: #ffe066;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav {
+                margin-top: 10px;
+            }
+            nav a {
+                margin-left: 0;
+                margin-right: 10px;
+                margin-bottom: 10px;
+                display: inline-block;
+            }
+            .orders-container {
+                margin: 10px;
+                padding: 15px;
+            }
+            .order-card {
+                padding: 15px;
+            }
+            select, button {
+                width: 100%;
+                margin-top: 8px;
+            }
         }
     </style>
 </head>

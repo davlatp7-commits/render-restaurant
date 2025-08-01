@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!-- Ensure proper scaling on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Меню ресторана</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <style>
@@ -60,6 +62,12 @@
         .category-filter strong {
     color: #000;
 }
+
+        /* Allow category links to scroll horizontally on narrow screens */
+        .category-filter {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
 
         .dish-list {
             display: flex;
@@ -130,6 +138,37 @@
         }
         .cart-float:hover {
             background-color: #ffe066;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            /* Reduce card width for tablets and small laptops */
+            .dish-card {
+                width: calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 500px) {
+            /* Use full width for dish cards on very small screens */
+            .dish-card {
+                width: calc(100% - 20px);
+            }
+            /* Adjust banner elements */
+            .restaurant-name {
+                font-size: 20px;
+            }
+            .restaurant-banner img.logo {
+                height: 50px;
+                width: 50px;
+            }
+            /* Scale buttons and floating cart link */
+            .add-button {
+                padding: 6px 12px;
+            }
+            .cart-float {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>

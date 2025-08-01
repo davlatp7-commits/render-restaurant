@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!-- Ensure proper scaling on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR‑код для меню</title>
     <style>
         body {
@@ -28,6 +30,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        /* Adjust QR code size and layout on small screens */
+        @media (max-width: 500px) {
+            body {
+                padding: 20px;
+            }
+            #qrcode {
+                width: 200px;
+                height: 200px;
+                margin: 20px auto;
+            }
         }
     </style>
     <!-- Load the QRCode.js library from a CDN.  This lightweight

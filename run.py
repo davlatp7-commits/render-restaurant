@@ -1,10 +1,5 @@
-from app import create_app, db
 from flask_migrate import upgrade
+from app import app
 
-app = create_app()
-
-# Выполняем миграции автоматически при запуске
-with app.app_context():
-    upgrade()from flask_migrate import upgrade
+# Применение миграций при запуске (работает и в dev, и на Render)
 upgrade()
-ы

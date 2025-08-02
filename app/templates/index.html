@@ -4,23 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Меню</title>
-    <!-- Modern mobile stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 </head>
 <body>
-    <!-- Top bar with restaurant name -->
     <div style="padding: 16px 12px; font-size: 22px; font-weight: 700;">
         Гемри & Эли хинкальная
     </div>
 
-    <!-- Side information panel with contact and working hours -->
     <div class="info-panel">
         <p><strong>Время работы:</strong> 10:00–22:00</p>
         <p><strong>Самовывоз:</strong> доступен</p>
         <p><strong>Телефон:</strong> +7 (903) 240 25 55</p>
-        <p><strong>Адрес:</strong> г. Москва, ул. Беломорская, 16а</p>
+        <p><strong>Адрес:</strong> г. Москва, ул. Беломорская, 16 а</p>
     </div>
-    <!-- Category selector -->
+
     <div class="categories">
         <a href="{{ url_for('client.index') }}" class="category-tab {{ 'active' if not selected_category else '' }}">Все</a>
         {% for cat in categories %}
@@ -28,18 +25,12 @@
         {% endfor %}
     </div>
 
-    <!-- Dish list -->
     <div class="dish-list">
         {% for dish in dishes %}
         <div class="dish-card">
-            {% if dish.image_filename %}
-                {% if dish.image_filename.startswith('http') %}
-                    <img src="{{ dish.image_filename }}" alt="{{ dish.name }}">
-                {% else %}
-                    <img src="{{ url_for('static', filename='img/' + dish.image_filename) }}" alt="{{ dish.name }}">
-                {% endif %}
+            {% if dish.image_url %}
+                <img src="{{ dish.image_url }}" alt="{{ dish.name }}">
             {% else %}
-                <!-- Fallback image when no picture is provided -->
                 <img src="{{ url_for('static', filename='img/logo.png') }}" alt="{{ dish.name }}">
             {% endif %}
             <div class="dish-info">
@@ -57,8 +48,7 @@
         </div>
         {% endfor %}
     </div>
-
-    <!-- Bottom navigation -->
+    
     <div class="navbar">
         <a href="{{ url_for('client.index') }}" class="nav-item active">
             <div class="icon">🏠</div>

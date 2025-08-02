@@ -2,148 +2,60 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Ensure proper scaling on mobile devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактировать блюдо</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #fdfdfd url('/static/img/bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            margin: 0;
-            padding: 0;
-            color: #000;
-        }
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-        header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        nav a {
-            margin-left: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            color: #000;
-            padding: 6px 12px;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-        }
-        nav a:hover {
-            background: #FFCC00;
-            color: #000;
-        }
-        .container {
-            max-width: 600px;
-            margin: 30px auto;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        form input,
-        form textarea,
-        form select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        form button {
-            background: #FFCC00;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        form button:hover {
-            background: #ffe066;
-        }
-        .image-preview {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .image-preview img {
-            max-width: 200px;
-            border-radius: 8px;
-        }
-
-        /* Responsive layout */
-        @media (max-width: 600px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            nav {
-                margin-top: 10px;
-            }
-            nav a {
-                margin-left: 0;
-                margin-right: 10px;
-                margin-bottom: 10px;
-                display: inline-block;
-            }
-            .container {
-                margin: 10px;
-                padding: 15px;
-            }
-            form button {
-                width: 100%;
-                margin-top: 8px;
-            }
-            .image-preview img {
-                max-width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 </head>
 <body>
-<header>
-    <h1>Редактировать блюдо</h1>
-    <nav>
-        <a href="{{ url_for('admin.admin_panel') }}">Блюда</a>
-        <a href="{{ url_for('admin.manage_categories') }}">Категории</a>
-        <a href="{{ url_for('admin.admin_orders') }}">Заказы</a>
-        <a href="{{ url_for('admin.orders_history') }}">История</a>
-    </nav>
-</header>
-
-<div class="container">
-    <h2>{{ dish.name }}</h2>
-
-    {% if dish.image_filename %}
-        <div class="image-preview">
-            {% if dish.image_filename.startswith('http') %}
-                <img src="{{ dish.image_filename }}" alt="Изображение блюда">
-            {% else %}
-                <img src="{{ url_for('static', filename='img/' + dish.image_filename) }}" alt="Изображение блюда">
-            {% endif %}
-        </div>
-    {% endif %}
-
-    <form method="post" enctype="multipart/form-data">
-        <input name="name" value="{{ dish.name }}" placeholder="Название" required>
-        <textarea name="description" placeholder="Описание">{{ dish.description }}</textarea>
-        <input name="weight" value="{{ dish.weight }}" placeholder="Вес, например 300 г">
-        <input type="number" step="0.01" name="price" value="{{ dish.price }}" placeholder="Цена, ₽" required>
-        <select name="category_id">
-            <option value="">Без категории</option>
-            {% for cat in categories %}
-            <option value="{{ cat.id }}" {% if dish.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
-            {% endfor %}
-        </select>
-        <input type="file" name="image" accept="image/*">
-        <button type="submit">Сохранить</button>
-    </form>
-</div>
+    <div class="waiter-header">
+        <a href="{{ url_for('admin.admin_panel') }}" class="back-button">←</a>
+        <div class="cart-title">Редактирование</div>
+        <div></div>
+    </div>
+    <div style="padding: 12px;">
+        <h2 style="font-size: 18px; margin-bottom: 12px;">{{ dish.name }}</h2>
+        {# Показываем текущее изображение блюда. Используем image_url, иначе image_filename. #}
+        {% if dish.image_url or dish.image_filename %}
+            <div style="text-align: center; margin-bottom: 12px;">
+                {% if dish.image_url %}
+                    <img src="{{ dish.image_url }}" alt="Изображение блюда" style="max-width: 200px; border-radius: 8px;">
+                {% elif dish.image_filename %}
+                    {% if dish.image_filename.startswith('http') %}
+                        <img src="{{ dish.image_filename }}" alt="Изображение блюда" style="max-width: 200px; border-radius: 8px;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='img/' + dish.image_filename) }}" alt="Изображение блюда" style="max-width: 200px; border-radius: 8px;">
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            <input name="name" value="{{ dish.name }}" placeholder="Название" required>
+            <textarea name="description" placeholder="Описание">{{ dish.description }}</textarea>
+            <input name="weight" value="{{ dish.weight }}" placeholder="Вес, например 300 г">
+            <input type="number" step="0.01" name="price" value="{{ dish.price }}" placeholder="Цена, ₽" required>
+            <select name="category_id">
+                <option value="">Без категории</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if dish.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+            <input type="file" name="image" accept="image/*">
+            <button type="submit">Сохранить</button>
+        </form>
+    </div>
+    <div class="navbar">
+        <a href="{{ url_for('admin.admin_panel') }}" class="nav-item active">
+            <div class="icon">🍽️</div>
+            <div>Блюда</div>
+        </a>
+        <a href="{{ url_for('admin.admin_orders') }}" class="nav-item">
+            <div class="icon">📋</div>
+            <div>Заказы</div>
+        </a>
+        <a href="{{ url_for('admin.manage_categories') }}" class="nav-item">
+            <div class="icon">🗂️</div>
+            <div>Категории</div>
+        </a>
+    </div>
 </body>
 </html>

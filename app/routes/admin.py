@@ -54,9 +54,26 @@ def add_dish():
 
 @admin_bp.route('/delete/<int:dish_id>')
 def delete_dish(dish_id):
+    """Удаляет блюдо, только если оно не фигурирует в заказах.
+
+    Если блюдо уже используется в существующих заказах, мы не можем
+    удалить его из таблицы `dish`, поскольку на него есть ссылки
+    (таблица `order_item`). Вместо этого помечаем его недоступным
+    (`is_available = False`), чтобы оно не отображалось в меню и
+    не могло быть добавлено в новые заказы.  Это избавляет от
+    ошибок связности БД.
+    """
     dish = Dish.query.get_or_404(dish_id)
-    db.session.delete(dish)
-    db.session.commit()
+    # Проверяем, есть ли хотя бы одна позиция заказа, ссылающаяся на это блюдо
+    has_relations = db.session.query(OrderItem.query.filter_by(dish_id=dish.id).exists()).scalar()
+    if has_relations:
+        # Если блюдо используется в заказах – делаем его недоступным
+        dish.is_available = False
+        db.session.commit()
+    else:
+        # Блюдо не связано ни с одним заказом – удаляем запись
+        db.session.delete(dish)
+        db.session.commit()
     return redirect(url_for('admin.admin_panel'))
 
 @admin_bp.route('/toggle/<int:dish_id>')

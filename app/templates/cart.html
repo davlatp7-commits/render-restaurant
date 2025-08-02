@@ -2,150 +2,81 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Ensure proper scaling on mobile devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Корзина</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            /* unify the backdrop with the rest of the application */
-            background: #fdfdfd url('/static/img/bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            padding: 20px;
-            margin: 0;
-            /* Use black text for improved readability */
-            color: #000;
-        }
-        h1 { text-align: center; }
-        table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.95); border-radius: 12px; overflow: hidden; }
-        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
-        th { background: #f7f7f7; }
-        .actions { text-align: right; margin-top: 20px; }
-        .button {
-            background: #FFCC00;
-            padding: 10px 20px;
-            border: none;
-            /* Unify button corners to 8px */
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            color: #000;
-        }
-        .button:hover { background: #ffe066; }
-        /* Controls for adjusting quantity */
-        .qty-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .qty-control button {
-            background: #FFCC00;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-size: 20px;
-            font-weight: bold;
-            line-height: 32px;
-            text-align: center;
-            cursor: pointer;
-        }
-        .qty-control button:hover {
-            background: #ffe066;
-        }
-        .qty-control input[type="number"] {
-            width: 60px;
-            text-align: center;
-            border: 1px solid #ccc;
-            /* Unify input corners to 8px */
-            border-radius: 8px;
-            padding: 6px;
-        }
-
-        /* Make long tables scroll horizontally on narrow screens */
-        table {
-            display: block;
-            overflow-x: auto;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            /* Shrink quantity control buttons */
-            .qty-control button {
-                width: 28px;
-                height: 28px;
-                font-size: 18px;
-            }
-            .qty-control input[type="number"] {
-                width: 50px;
-            }
-            /* Center action buttons and space them out */
-            .actions {
-                text-align: center;
-            }
-            .button {
-                margin: 5px 0;
-                display: inline-block;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 </head>
 <body>
-    <h1>Ваша корзина</h1>
-    <form action="{{ url_for('client.submit_order') }}" method="POST">
-        <table>
-            <tr><th>Блюдо</th><th>Количество</th></tr>
-            {% for dish in dishes %}
-            <tr>
-                <td>{{ dish.name }}</td>
-                <td>
-                    <div class="qty-control">
-                        <button type="button" class="qty-minus">−</button>
-                        <input type="number" name="quantities[{{ dish.id }}]" value="{{ cart[dish.id|string] }}" min="1">
-                        <button type="button" class="qty-plus">+</button>
-                    </div>
-                    <label style="margin-left: 10px;"><input type="checkbox" name="remove[]" value="{{ dish.id }}"> удалить</label>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        <div style="margin-top: 20px;">
-    <label for="table_id" style="display:block; font-weight:bold; color:#fff; margin-bottom:6px;">Номер стола:</label>
-    <input type="number" name="table_id" id="table_id" required
-           style="width:100%; padding:8px; border-radius:8px; border:1px solid #ccc; background:#fff; color:#000;">
-</div>
-
-<div style="margin-top: 12px;">
-    <label for="comment" style="display:block; font-weight:bold; color:#fff; margin-bottom:6px;">Комментарий:</label>
-    <input type="text" name="comment" id="comment"
-           style="width:100%; padding:8px; border-radius:8px; border:1px solid #ccc; background:#fff; color:#000;">
-</div>
-        <div class="actions">
-            <button type="submit" class="button">Оформить заказ</button>
-            <a href="{{ url_for('client.index') }}" class="button">Назад к меню</a>
+{# Вычисляем только количество позиций в корзине. Итоговая сумма не отображается. #}
+{% set total_items = 0 %}
+{% for dish in dishes %}
+    {% set qty = cart[dish.id|string] %}
+    {% set total_items = total_items + qty %}
+{% endfor %}
+    <div class="cart-header">
+        <a href="{{ url_for('client.index') }}" class="back-button">←</a>
+        <div class="cart-title">Корзина</div>
+        <div class="cart-summary">
+            <span>{{ total_items }}</span>
         </div>
+    </div>
+
+    <form action="{{ url_for('client.submit_order') }}" method="POST">
+        <div class="cart-items">
+            {% for dish in dishes %}
+            <div class="cart-item">
+                <div class="cart-item-info">
+                    {% if dish.image_filename %}
+                        {% if dish.image_filename.startswith('http') %}
+                            <img src="{{ dish.image_filename }}" alt="{{ dish.name }}">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='img/' + dish.image_filename) }}" alt="{{ dish.name }}">
+                        {% endif %}
+                    {% else %}
+                        <!-- Use a generic logo as fallback -->
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="{{ dish.name }}">
+                    {% endif %}
+                    <div class="cart-item-details">
+                        <span class="cart-item-name">{{ dish.name }}</span>
+                        <span class="cart-item-price">{{ '%.0f'|format(dish.price) }} ₽</span>
+                    </div>
+                </div>
+                <div class="qty-control">
+                    <button type="button" class="qty-btn qty-minus">−</button>
+                    <input type="number" name="quantities[{{ dish.id }}]" value="{{ cart[dish.id|string] }}" min="1" class="qty-input">
+                    <button type="button" class="qty-btn qty-plus">+</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {# Блок с общей суммой заказа удалён по требованиям #}
+        <div class="order-comment">
+            <input type="number" name="table_id" placeholder="Номер стола" required>
+        </div>
+        <div class="order-comment">
+            <input type="text" name="comment" placeholder="Комментарий к заказу">
+        </div>
+        <button type="submit" class="btn-order">Оформить заказ</button>
     </form>
-    <!-- Interactive quantity controls: increment/decrement quantity inputs -->
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.qty-control').forEach(function(ctrl) {
-                const minus = ctrl.querySelector('.qty-minus');
-                const plus = ctrl.querySelector('.qty-plus');
-                const input = ctrl.querySelector('input[type="number"]');
-                minus.addEventListener('click', function() {
-                    let value = parseInt(input.value) || 1;
-                    if (value > 1) {
-                        input.value = value - 1;
-                    }
-                });
-                plus.addEventListener('click', function() {
-                    let value = parseInt(input.value) || 1;
-                    input.value = value + 1;
-                });
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.cart-item').forEach(function(item) {
+            var minus = item.querySelector('.qty-minus');
+            var plus = item.querySelector('.qty-plus');
+            var input = item.querySelector('input.qty-input');
+            minus.addEventListener('click', function() {
+                var val = parseInt(input.value) || 1;
+                if (val > 1) {
+                    input.value = val - 1;
+                }
+            });
+            plus.addEventListener('click', function() {
+                var val = parseInt(input.value) || 1;
+                input.value = val + 1;
             });
         });
+    });
     </script>
 </body>
 </html>

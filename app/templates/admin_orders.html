@@ -2,137 +2,57 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Ensure proper scaling on mobile devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Текущие заказы</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #fdfdfd url('/static/img/bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-        header {
-            background: rgba(255,255,255,0.95);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-        header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        nav a {
-            margin-left: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            color: #333;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: background-color 0.2s;
-        }
-        nav a:hover {
-            background: #FFCC00;
-            color: #000;
-        }
-        .orders-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: rgba(255,255,255,0.95);
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .order-card {
-            background: #fff;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-        .order-header {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        select, button {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-        }
-        button {
-            background: #FFCC00;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background: #ffe066;
-        }
-
-        /* Responsive layout */
-        @media (max-width: 600px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            nav {
-                margin-top: 10px;
-            }
-            nav a {
-                margin-left: 0;
-                margin-right: 10px;
-                margin-bottom: 10px;
-                display: inline-block;
-            }
-            .orders-container {
-                margin: 10px;
-                padding: 15px;
-            }
-            .order-card {
-                padding: 15px;
-            }
-            select, button {
-                width: 100%;
-                margin-top: 8px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 </head>
 <body>
-<header>
-    <h1>Текущие заказы</h1>
-    <nav>
-        <a href="{{ url_for('admin.admin_orders') }}">Заказы</a>
-        <a href="{{ url_for('admin.orders_history') }}">История</a>
-        <a href="{{ url_for('admin.manage_categories') }}">Категории</a>
-        <a href="{{ url_for('admin.admin_panel') }}">Блюда</a>
-    </nav>
-</header>
-
-<div class="orders-container">
-{% for order in orders %}
-  <div class="order-card">
-    <form method="post" action="{{ url_for('admin.update_order_status', order_id=order.id) }}">
-      <div class="order-header">Стол №{{ order.table_id }} — статус: {{ order.status }}</div>
-      <select name="status">
-        {% for s in statuses %}
-        <option value="{{ s }}" {% if s == order.status %}selected{% endif %}>{{ s }}</option>
+    <div class="waiter-header">
+        <a href="{{ url_for('client.index') }}" class="back-button">←</a>
+        <div class="cart-title">Заказы</div>
+        <div></div>
+    </div>
+    <div class="categories" style="padding-bottom: 0;">
+        <a href="{{ url_for('admin.admin_panel') }}" class="category-tab">Блюда</a>
+        <a href="{{ url_for('admin.admin_orders') }}" class="category-tab active">Заказы</a>
+        <a href="{{ url_for('admin.orders_history') }}" class="category-tab">История</a>
+        <a href="{{ url_for('admin.manage_categories') }}" class="category-tab">Категории</a>
+    </div>
+    <div style="padding: 12px;">
+        {% for order in orders %}
+        <div class="order-card">
+            <form method="post" action="{{ url_for('admin.update_order_status', order_id=order.id) }}">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Стол №{{ order.table_id }}</h3>
+                    <select name="status" style="flex-shrink:0; padding: 6px 8px; border:1px solid #DDDDDD; border-radius:8px;">
+                        {% for s in statuses %}
+                            <option value="{{ s }}" {% if s == order.status %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <ul style="margin-left: 16px; list-style-position: inside; font-size: 14px; margin-top: 8px;">
+                    {% for item in order.items %}
+                    <li>{{ item.dish.name }} ×{{ item.quantity }}</li>
+                    {% endfor %}
+                </ul>
+                <button type="submit" class="btn-accept" style="margin-top: 8px;">Обновить</button>
+            </form>
+        </div>
         {% endfor %}
-      </select>
-      <button type="submit">Обновить</button>
-    </form>
-    <ul>
-      {% for item in order.items %}
-      <li>{{ item.dish.name }} ×{{ item.quantity }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-{% endfor %}
-</div>
+    </div>
+    <div class="navbar">
+        <a href="{{ url_for('admin.admin_panel') }}" class="nav-item">
+            <div class="icon">🍽️</div>
+            <div>Блюда</div>
+        </a>
+        <a href="{{ url_for('admin.admin_orders') }}" class="nav-item active">
+            <div class="icon">📋</div>
+            <div>Заказы</div>
+        </a>
+        <a href="{{ url_for('admin.manage_categories') }}" class="nav-item">
+            <div class="icon">🗂️</div>
+            <div>Категории</div>
+        </a>
+    </div>
 </body>
 </html>

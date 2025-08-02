@@ -1,72 +1,105 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <!-- Ensure proper scaling on mobile devices -->
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Статус заказа</title>
-    <meta http-equiv="refresh" content="5">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #fdfdfd url('/static/img/bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            margin: 0;
-            padding: 40px;
-            /* Use black text for improved readability */
-            color: #000;
-        }
-        .status-card {
-            background: rgba(255,255,255,0.95);
-            padding: 20px 30px;
-            border-radius: 12px;
-            max-width: 500px;
-            margin: auto;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        h1 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin-bottom: 5px;
-        }
-
-        /* Responsive tweaks for narrow screens */
-        @media (max-width: 500px) {
-            body {
-                padding: 20px;
-            }
-            .status-card {
-                max-width: 90%;
-                padding: 15px 20px;
-            }
-            h1 {
-                font-size: 20px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 </head>
 <body>
-<div class="status-card">
-{% if order %}
-  <h1>Стол {{ order.table_id }}</h1>
-  <p><strong>Статус:</strong> {{ order.status }}</p>
-  <p><strong>Комментарий:</strong> {{ order.comment }}</p>
-  <h3>Блюда:</h3>
-  <ul>
-    {% for item in order.items %}
-      <li>{{ item.dish.name }} ×{{ item.quantity }}</li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Заказ не найден</p>
-{% endif %}
-</div>
+    <div class="status-container">
+        <div class="cart-header">
+            <a href="{{ url_for('client.index') }}" class="back-button">←</a>
+            <div class="cart-title">Заказ{% if order %} №{{ order.id }}{% endif %}</div>
+            <div></div>
+        </div>
+        {% if order %}
+            <!-- Progress bar -->
+            {% set statuses = ['принят', 'готовится', 'передаётся'] %}
+            {% if order.status == 'принят' %}
+                {% set step = 0 %}
+            {% elif order.status == 'готовится' %}
+                {% set step = 1 %}
+            {% elif order.status == 'передаётся' %}
+                {% set step = 2 %}
+            {% else %}
+                {% set step = -1 %}
+            {% endif %}
+            <div class="progress-bar">
+                <div class="progress-line"></div>
+                {# Делаем статусы интерактивными: оборачиваем каждый сегмент в ссылку #}
+                {% for s in statuses %}
+                    <a href="#" class="progress-segment {% if loop.index0 <= step %}active{% endif %}" style="text-decoration:none; color:inherit;">
+                        <div class="dot"></div>
+                        <span>{{ s.capitalize() }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <!-- Order details -->
+            <div class="order-details">
+                <p><strong>Стол:</strong> {{ order.table_id }}</p>
+                <p><strong>Статус:</strong> {{ order.status }}</p>
+                {% if order.comment %}
+                    <p><strong>Комментарий:</strong> {{ order.comment }}</p>
+                {% endif %}
+                <p><strong>Блюда:</strong></p>
+                <ul style="margin-left: 16px; padding-left: 0; list-style-position: inside;">
+                    {% for item in order.items %}
+                        <li>{{ item.dish.name }} ×{{ item.quantity }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <button class="refresh-btn" id="refreshBtn">Обновить (<span id="refreshTimer">5</span> сек)</button>
+        {% else %}
+            <p style="padding: 16px; font-size: 16px;">Заказ не найден</p>
+        {% endif %}
+    </div>
+
+    <!-- Optional navigation bar for order page (кнопка корзины убрана) -->
+    <div class="navbar">
+        <a href="{{ url_for('client.index') }}" class="nav-item">
+            <div class="icon">🏠</div>
+            <div>Меню</div>
+        </a>
+        <a href="#" class="nav-item active">
+            <div class="icon">✔️</div>
+            <div>Статус</div>
+        </a>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var timerSpan = document.getElementById('refreshTimer');
+        var seconds = parseInt(timerSpan ? timerSpan.textContent : '0');
+        // Если заказ завершён, сразу перенаправляем клиента на меню
+        {% if order and order.status == 'завершён' %}
+            window.location.href = "{{ url_for('client.index') }}";
+            return;
+        {% endif %}
+        // Таймер автообновления статуса
+        var interval = setInterval(function() {
+            if (typeof seconds !== 'number' || isNaN(seconds)) {
+                clearInterval(interval);
+                return;
+            }
+            seconds--;
+            if (seconds <= 0) {
+                clearInterval(interval);
+                location.reload();
+            }
+            if (timerSpan) {
+                timerSpan.textContent = seconds;
+            }
+        }, 1000);
+        var btn = document.getElementById('refreshBtn');
+        if (btn) {
+            btn.addEventListener('click', function() {
+                location.reload();
+            });
+        }
+    });
+    </script>
 </body>
 </html>

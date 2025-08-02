@@ -3,187 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Меню ресторана</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <style>
-        body {
-            background: #fdfdfd url('/static/img/bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #000;
-        }
-        .restaurant-banner {
-            text-align: center;
-            padding: 20px 0;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .restaurant-banner img.logo {
-            height: 60px;
-            width: 60px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-        .restaurant-name {
-            margin: 10px 0 0;
-            font-size: 26px;
-            font-weight: bold;
-        }
-        .restaurant-info {
-            text-align: center;
-            padding: 10px;
-            font-size: 14px;
-            background: #fff;
-        }
-        .category-filter {
-            text-align: center;
-            padding: 10px;
-            background: #fff;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        .category-filter a {
-            margin: 0 10px;
-            text-decoration: none;
-            font-weight: bold;
-            color: #000;
-            border-bottom: 2px solid transparent;
-        }
-        .category-filter a.active {
-            border-color: #FFCC00;
-        }
-
-        .dish-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 20px;
-        }
-        .dish-card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            margin: 10px;
-            width: 300px;
-            overflow: hidden;
-            transition: transform 0.2s ease;
-        }
-        .dish-card:hover {
-            transform: scale(1.02);
-        }
-        .dish-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-        .dish-details {
-            padding: 15px;
-        }
-        .dish-details h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-        .dish-details p {
-            font-size: 14px;
-            color: #666;
-        }
-        .dish-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .add-button {
-            background-color: #FFCC00;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .add-button:hover {
-            background-color: #ffe066;
-        }
-        .cart-float {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #FFCC00;
-            color: #000;
-            font-weight: bold;
-            padding: 12px 20px;
-            border-radius: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            text-decoration: none;
-            z-index: 1000;
-            transition: background-color 0.2s ease;
-        }
-        .cart-float:hover {
-            background-color: #ffe066;
-        }
-
-        @media (max-width: 768px) {
-            .dish-card {
-                width: calc(50% - 20px);
-            }
-        }
-
-        @media (max-width: 500px) {
-            .dish-card {
-                width: calc(100% - 20px);
-            }
-            .restaurant-name {
-                font-size: 20px;
-            }
-            .restaurant-banner img.logo {
-                height: 50px;
-                width: 50px;
-            }
-            .add-button {
-                padding: 6px 12px;
-            }
-            .cart-float {
-                padding: 10px 16px;
-                font-size: 14px;
-            }
-        }
-    </style>
+    <title>Меню</title>
+    <!-- Modern mobile stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 </head>
 <body>
-
-    <div class="restaurant-banner">
-        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Логотип ресторана" class="logo">
-        <h1 class="restaurant-name">Гемри & Эли хинкальная</h1>
+    <!-- Top bar with restaurant name -->
+    <div style="padding: 16px 12px; font-size: 22px; font-weight: 700;">
+        Гемри & Эли хинкальная
     </div>
 
-    <div class="restaurant-info">
-        <p><strong>Часы работы:</strong> ежедневно с 10:00 до 22:00</p>
+    <!-- Side information panel with contact and working hours -->
+    <div class="info-panel">
+        <p><strong>Время работы:</strong> 10:00–22:00</p>
         <p><strong>Самовывоз:</strong> доступен</p>
+        <p><strong>Телефон:</strong> +7 (903) 240 25 55</p>
+        <p><strong>Адрес:</strong> г. Москва, ул. Беломорская, 16а</p>
     </div>
-
-    <div class="category-filter">
-        <strong>Категории:</strong>
-        <a href="{{ url_for('client.index') }}" class="{{ 'active' if not selected_category else '' }}">Все</a>
-        {% for category in categories %}
-            <a href="{{ url_for('client.index', category=category) }}" class="{{ 'active' if selected_category == category else '' }}">{{ category }}</a>
+    <!-- Category selector -->
+    <div class="categories">
+        <a href="{{ url_for('client.index') }}" class="category-tab {{ 'active' if not selected_category else '' }}">Все</a>
+        {% for cat in categories %}
+            <a href="{{ url_for('client.index', category=cat) }}" class="category-tab {{ 'active' if selected_category == cat else '' }}">{{ cat }}</a>
         {% endfor %}
     </div>
 
+    <!-- Dish list -->
     <div class="dish-list">
         {% for dish in dishes %}
         <div class="dish-card">
-            <img src="{{ dish.image_url or url_for('static', filename='img/default.jpg') }}" alt="{{ dish.name }}">
-            <div class="dish-details">
-                <h3>{{ dish.name }}</h3>
-                <p>{{ dish.description }}</p>
+            {% if dish.image_filename %}
+                {% if dish.image_filename.startswith('http') %}
+                    <img src="{{ dish.image_filename }}" alt="{{ dish.name }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/' + dish.image_filename) }}" alt="{{ dish.name }}">
+                {% endif %}
+            {% else %}
+                <!-- Fallback image when no picture is provided -->
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="{{ dish.name }}">
+            {% endif %}
+            <div class="dish-info">
+                <div class="dish-name">{{ dish.name }}</div>
+                <div class="dish-desc">{{ dish.description }}</div>
+                {% if dish.weight %}<div class="dish-weight">{{ dish.weight }}</div>{% endif %}
                 <div class="dish-bottom">
-                    <span class="dish-price">{{ dish.price }} ₽</span>
+                    <div class="dish-price">{{ '%.0f'|format(dish.price) }} ₽</div>
                     <form action="{{ url_for('client.add_to_cart', dish_id=dish.id) }}" method="post">
-                        <button class="add-button">+</button>
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn-add">+</button>
                     </form>
                 </div>
             </div>
@@ -191,8 +58,20 @@
         {% endfor %}
     </div>
 
-    <a href="{{ url_for('client.cart') }}" class="cart-float">
-        🛒 Перейти в корзину
-    </a>
+    <!-- Bottom navigation -->
+    <div class="navbar">
+        <a href="{{ url_for('client.index') }}" class="nav-item active">
+            <div class="icon">🏠</div>
+            <div>Меню</div>
+        </a>
+        <a href="{{ url_for('client.cart') }}" class="nav-item">
+            <div class="icon">🛒</div>
+            <div>Корзина</div>
+            {% set cart_count = session.get('cart', {}).values() | sum %}
+            {% if cart_count > 0 %}
+            <div class="badge">{{ cart_count }}</div>
+            {% endif %}
+        </a>
+    </div>
 </body>
 </html>

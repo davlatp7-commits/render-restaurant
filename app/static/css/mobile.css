@@ -1,0 +1,637 @@
+/*
+ * Mobile-first stylesheet for the restaurant application.
+ *
+ * This file defines a modern, touch-friendly look and feel inspired by
+ * native mobile applications.  A handful of CSS variables define the
+ * colour palette and sizes up front so the theme can be adjusted in
+ * one place.  Components such as category tabs, dish cards, cart
+ * summaries, progress bars and admin cards share consistent spacing
+ * and styling.  Whenever possible media queries are avoided in
+ * favour of flexible layouts that naturally adapt to different
+ * screen widths.
+ */
+
+:root {
+  --primary-color: #FF7A00;
+  --background-color: #FAFAFA;
+  --secondary-color: #F0F0F0;
+  --card-bg: #FFFFFF;
+  --text-color: #000000;
+  --border-radius: 16px;
+  --nav-height: 60px;
+  --font-family: 'Arial', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding-bottom: var(--nav-height);
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Category tabs */
+.categories {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.category-tab {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: var(--secondary-color);
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.category-tab.active {
+  background: var(--primary-color);
+  color: #FFFFFF;
+}
+
+/* Dish list and cards */
+.dish-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.dish-card {
+  display: flex;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.dish-card img {
+  width: 120px;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dish-info {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dish-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.dish-desc {
+  font-size: 13px;
+  color: #777777;
+  line-height: 1.3;
+}
+
+.dish-weight {
+  font-size: 12px;
+  color: #999999;
+}
+
+.dish-bottom {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.dish-price {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.btn-add {
+  background: var(--primary-color);
+  color: #FFFFFF;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-add:active {
+  background: #e56f00;
+}
+
+/* Bottom navigation bar */
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--nav-height);
+  background: var(--card-bg);
+  border-top: 1px solid #DDDDDD;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  color: #555555;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-top: 4px;
+}
+
+.nav-item .icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.nav-item.active {
+  color: var(--primary-color);
+}
+
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 20px;
+  background: var(--primary-color);
+  color: #FFFFFF;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* Информационная боковая панель для меню */
+.info-panel {
+  background: var(--card-bg);
+  margin: 0 12px 12px;
+  padding: 12px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+  line-height: 1.4;
+  color: #444444;
+}
+.info-panel p {
+  margin: 4px 0;
+}
+
+/* Cart */
+.cart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.cart-title {
+  font-size: 20px;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+}
+
+.cart-summary {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cart-items {
+  padding: 12px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #EEEEEE;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.cart-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.cart-item-info img {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.cart-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cart-item-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cart-item-price {
+  font-size: 14px;
+  color: #555555;
+}
+
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.qty-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--secondary-color);
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.qty-input {
+  width: 40px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+}
+
+.order-summary {
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.order-comment {
+  padding: 0 12px 12px 12px;
+}
+
+.order-comment input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #DDDDDD;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.btn-order {
+  margin: 12px;
+  width: calc(100% - 24px);
+  padding: 14px;
+  background: var(--primary-color);
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.btn-order:active {
+  background: #e56f00;
+}
+
+/* Order status page */
+.status-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: calc(var(--nav-height) + 20px);
+}
+
+.progress-bar {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 12px 0;
+}
+
+.progress-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #EEEEEE;
+  transform: translateY(-50%);
+  border-radius: 2px;
+  z-index: 0;
+}
+
+.progress-segment {
+  flex: 1;
+  text-align: center;
+  z-index: 1;
+}
+
+.progress-segment .dot {
+  width: 14px;
+  height: 14px;
+  background: #DDDDDD;
+  border-radius: 50%;
+  margin: 0 auto 4px;
+}
+
+.progress-segment.active .dot {
+  background: var(--primary-color);
+}
+
+.progress-segment span {
+  font-size: 12px;
+  color: #777777;
+}
+
+.progress-segment.active span {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.order-details {
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.refresh-btn {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #DDDDDD;
+  border-radius: 10px;
+  background: var(--card-bg);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.refresh-btn:active {
+  background: var(--secondary-color);
+}
+
+/* Waiter and admin order cards */
+.waiter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.waiter-orders {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.order-card h3 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.order-card p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.order-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.order-actions .btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-accept {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+.btn-delete {
+  background: #EEEEEE;
+  color: #333333;
+}
+
+/* Admin dish cards */
+.admin-dish-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  display: flex;
+  gap: 12px;
+}
+
+.admin-dish-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.admin-dish-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-dish-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.admin-dish-desc {
+  font-size: 13px;
+  color: #666666;
+  line-height: 1.3;
+}
+
+.admin-dish-meta {
+  font-size: 12px;
+  color: #999999;
+  display: flex;
+  gap: 8px;
+}
+
+.admin-dish-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-dish-actions a {
+  font-size: 12px;
+  color: var(--primary-color);
+  text-decoration: none;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.admin-dish-actions a:hover {
+  background: var(--primary-color);
+  color: #FFFFFF;
+}
+
+/* Category list for admin */
+.category-item {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.category-item form {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+}
+
+.category-item input[type="text"],
+.category-item select {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #DDDDDD;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.category-item button {
+  background: var(--primary-color);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.category-item button:hover {
+  background: #e56f00;
+}
+
+.category-item a {
+  font-size: 14px;
+  color: #E74C3C;
+  font-weight: 600;
+}
+
+.category-item a:hover {
+  text-decoration: underline;
+}
+
+/* Forms */
+form input,
+form textarea,
+form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #DDDDDD;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+form button {
+  background: var(--primary-color);
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #e56f00;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .dish-card {
+    flex-direction: row;
+    height: 160px;
+  }
+  .navbar {
+    width: 375px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
